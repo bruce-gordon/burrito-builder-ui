@@ -7,17 +7,14 @@ class OrderForm extends Component {
     this.props = props;
     this.state = {
       name: '',
-      ingredients: []
+      ingredients: [],
+      error: ''
     };
   }
 
   handleSubmit = e => {
     e.preventDefault();
-    this.props.takeOrder({
-      name: this.state.name,
-      ingredients: this.state.ingredients
-    })
-    this.clearInputs();
+    this.checkInputs();
   }
 
   clearInputs = () => {
@@ -27,10 +24,30 @@ class OrderForm extends Component {
   handleIngredientChange = (e) => {
     e.preventDefault();
     this.setState({ ingredients: [...this.state.ingredients, e.target.name]})
+    this.setState({ error: '' })
   }
 
   handleNameChange = (e) => {
-    this.setState({ name: e.target.value})
+    this.setState({ name: e.target.value });
+    this.setState({ error: '' })
+  }
+
+  capitalizeName = () => {
+    const splitName = this.state.name.toLowerCase().split(' ');
+    const custName = splitName.map(word => word.charAt(0).toUpperCase() + word.substring(1))
+    return custName.join(' ')
+  }
+
+  checkInputs = () => {
+    if (this.state.name && this.state.ingredients.length) {
+      this.props.takeOrder({
+        name: this.capitalizeName(),
+        ingredients: this.state.ingredients
+      })
+      this.clearInputs();
+    } else {
+      this.setState({ error: 'Please enter your name and select at least one ingredient before you click Submit Order' })
+    }
   }
 
   render() {
@@ -54,7 +71,11 @@ class OrderForm extends Component {
         />
         { ingredientButtons }
         <p>Order: { this.state.ingredients.join(', ') || 'Nothing selected' }</p>
-
+        {this.state.error &&
+          <div className='error-div'>
+            <p className='error' > {this.state.error} </p>
+          </div>
+        }
         <button onClick={e => this.handleSubmit(e)}>
           Submit Order
         </button>
