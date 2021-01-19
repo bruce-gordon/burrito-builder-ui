@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './OrderForm.css';
 
 class OrderForm extends Component {
   constructor(props) {
@@ -10,14 +11,26 @@ class OrderForm extends Component {
     };
   }
 
-
   handleSubmit = e => {
     e.preventDefault();
+    this.props.takeOrder({
+      name: this.state.name,
+      ingredients: this.state.ingredients
+    })
     this.clearInputs();
   }
 
   clearInputs = () => {
     this.setState({name: '', ingredients: []});
+  }
+
+  handleIngredientChange = (e) => {
+    e.preventDefault();
+    this.setState({ ingredients: [...this.state.ingredients, e.target.name]})
+  }
+
+  handleNameChange = (e) => {
+    this.setState({ name: e.target.value})
   }
 
   render() {
@@ -39,9 +52,7 @@ class OrderForm extends Component {
           value={this.state.name}
           onChange={e => this.handleNameChange(e)}
         />
-
         { ingredientButtons }
-
         <p>Order: { this.state.ingredients.join(', ') || 'Nothing selected' }</p>
 
         <button onClick={e => this.handleSubmit(e)}>
