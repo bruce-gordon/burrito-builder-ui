@@ -2,7 +2,6 @@ import React from 'react';
 import './Order.css';
 
 const Order = ({ id, name, ingredients }) => {
-  console.log(id, name, ingredients)
 
   return (
     <div className="order">
